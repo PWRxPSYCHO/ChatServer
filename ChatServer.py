@@ -17,5 +17,6 @@ def incoming_clients():
         client.send(bytes("Hello! Welcome to the server! Type your username and press enter"))
         addresses[client] = address
         Thread(targer=handle_client, args=(client,)).start()
+        print("hello world")
 
         
