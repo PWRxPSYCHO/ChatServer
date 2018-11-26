@@ -24,6 +24,7 @@ def incoming_clients():
 
 def handle_client():
     print("This function will handle each individual client")
+    print("Hello World")
 
 
 if __name__ == "__main__":
