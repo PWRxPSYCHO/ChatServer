@@ -1,3 +1,2 @@
 print ("hi")
-print("Hello World")
-print('test')
+print("Lexie Test")
