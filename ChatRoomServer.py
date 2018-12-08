@@ -1,23 +1,39 @@
-from socket import *
+from socket import AF_INET, socket, SOCK_STREAM
 import threading
+
 serverPort = 5000
 serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('', serverPort))
-serverSocket.listen(1)
+serverSocket.listen(5)
 print("The server is ready to receive")
 
 clients = {}
-addresses ={}
+addresses = {}
 
-def service_function(connection_socket):
+
+def handle_client(connection_socket):
+    name = connection_socket.recv(1024).decode()
+    welcome_message = "Welcome %s. To exit, type Quit." % name
+    connection_socket.send(welcome_message).encode()
+    message = "%s has joined!" % name
+    broadcast(bytes(message, "utf8"))
+    clients[connection_socket] = name
+
     while True:
-        sentence = connection_socket.recv(1024).decode()
-        if sentence == "Quit":
-            connection_socket.close()
-            break
+        message = connection_socket.recv(1024).decode()
+        if message != "Quit":
+            broadcast(message, name+": ")
         else:
-            connection_socket.send("Welcome to the server!").encode()    
-            connection_socket.send(str(eval(sentence)).encode())
+            connection_socket.send(message.encode())
+            connection_socket.close()
+            del clients[connection_socket]
+            broadcast(bytes("%s has left the chat" % name, "utf8"))
+            break
+
+
+def broadcast(msg, prefix=""):
+    for connections in clients:
+        connections.send(bytes(prefix, "utf8")+msg)
 
 
 class ServiceThread(threading.Thread):
@@ -29,9 +45,11 @@ class ServiceThread(threading.Thread):
         service_function(self.connection_socket)
 
 
-while True:
-    connection_socket, addr = serverSocket.accept()
-    print("%s has connected" % addr)
-    addresses[connection_socket] = addr
-    new_thread = ServiceThread(connection_socket)
-    new_thread.start()
+def client_connections():
+    while True:
+        connection_socket, addr = serverSocket.accept()
+        print("%s:%s has connected" % addr)
+        connection_socket.send("Type your name: ").encode()
+        addresses[connection_socket] = addr
+        new_thread = ServiceThread(connection_socket)
+        new_thread.start()
