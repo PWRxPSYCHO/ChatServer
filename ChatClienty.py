@@ -12,6 +12,9 @@ def receive():
 
 
 
+
+
+
 buffer_size = 1024
 ADDR = ('localhost', 33000)
 
