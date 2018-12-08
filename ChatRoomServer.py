@@ -42,14 +42,13 @@ class ServiceThread(threading.Thread):
         self.connection_socket = connection_socket
 
     def run(self):
-        service_function(self.connection_socket)
+        handle_client(self.connection_socket)
 
 
-def client_connections():
-    while True:
-        connection_socket, addr = serverSocket.accept()
-        print("%s:%s has connected" % addr)
-        connection_socket.send("Type your name: ").encode()
-        addresses[connection_socket] = addr
-        new_thread = ServiceThread(connection_socket)
-        new_thread.start()
+while True:
+    connection_socket, addr = serverSocket.accept()
+    print("%s:%s has connected" % addr)
+    connection_socket.send("Type your name: ").encode()
+    addresses[connection_socket] = addr
+    new_thread = ServiceThread(connection_socket)
+    new_thread.start()
