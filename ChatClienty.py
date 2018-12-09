@@ -27,3 +27,5 @@ def client_messages():
 if __name__ == "__main__":
     receive_thread = Thread(target=incoming_messages)
     receive_thread.start()
+    while True:
+        client_messages()

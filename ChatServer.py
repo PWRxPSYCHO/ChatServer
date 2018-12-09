@@ -24,24 +24,25 @@ def handle_client(connection_socket):
     welcome_message = "Welcome %s. To exit, type Quit." % name
     connection_socket.send(bytes(welcome_message, "utf8"))
     message = "%s has joined!" % name
-    broadcast(bytes(message, "utf8"))
+    broadcast((message))
     clients[connection_socket] = name
 
     while True:
         message = connection_socket.recv(1024).decode()
-        if message != bytes("Quit", "utf8"):
+        if message != "quit":
             broadcast(message, name+": ")
         else:
-            connection_socket.send(bytes(message, "utf8"))
+            connection_socket.send(message).encode()
             connection_socket.close()
             del clients[connection_socket]
-            broadcast(bytes("%s has left the chat" % name, "utf8"))
+            broadcast(("%s has left the chat" % name))
             break
 
 
 def broadcast(msg, prefix=""):
+
     for connections in clients:
-        connections.send(bytes(prefix, "utf8")+msg)
+       connections.send((prefix + msg).encode())
 
 
 if __name__ == "__main__":
