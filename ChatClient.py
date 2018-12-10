@@ -13,7 +13,7 @@ def incoming_messages(name, sock):
             threadLock.acquire()
             while True:
                 data, addr = socket.recvfrom(2048)
-                print(str(data))
+                print(data.decode())
         except:
             pass
         finally:
@@ -22,6 +22,7 @@ def incoming_messages(name, sock):
 
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind((serverHost, serverPort))
+serverSocket.setblocking(0)
 
 receiveThread = threading.Thread(
     target=incoming_messages, args=("ReceiveingThread", serverSocket))
@@ -32,9 +33,9 @@ message = input(name + ": ")
 
 while message != "!quit":
     if message != '':
-        serverSocket.sendto(name + ": " + message, (serverHost, serverPort))
+        serverSocket.sendto((name + ": " + message).encode(), (serverHost, serverPort))
     threadLock.acquire()
-    message = input(name + "->")
+    message = input(name + ":")
     threadLock.release()
 
 isConnected = False
