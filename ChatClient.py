@@ -21,7 +21,6 @@ def incoming_messages(name, sock):
 
 
 serverSocket = socket(AF_INET, SOCK_DGRAM)
-serverSocket.bind((serverHost, serverPort))
 serverSocket.setblocking(0)
 
 receiveThread = threading.Thread(

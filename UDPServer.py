@@ -22,7 +22,7 @@ while isRunning:
             clients.append(address)
         print(address + ":" + message)
         for client in clients:
-            serverSocket.sendto(message.encode(), client)
+            serverSocket.sendto(data, client)
     except:
         pass
 serverSocket.close()
