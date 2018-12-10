@@ -6,7 +6,7 @@ serverPort = 5000
 
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-""" 
+
 def incoming_messages():
     while True:
         try:
@@ -28,14 +28,3 @@ if __name__ == "__main__":
     receive_thread.start()
     while True:
         client_messages()
- """
-
-while True:
-    serverMessage, serverAddress = clientSocket.recvfrom(2048)
-    print(serverMessage)
-    clientMessage = input("")
-    if(clientMessage == "!quit"):
-        clientSocket.close()
-    else:
-        clientSocket.sendto(clientMessage.encode(),
-                            (serverAddress, serverPort))

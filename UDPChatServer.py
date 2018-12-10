@@ -16,10 +16,10 @@ def init_connection():
     while True:
         print("%s:%s has connected" % clientAddress)
         serverSocket.sendto(("Type your name: ").encode(), clientAddress)
-        Thread(target=handle_client, args=(clientAddress,)).start()
+        Thread(target=handle_client, args=(serverSocket,)).start()
 
 
-def handle_client(clientAddress):
+def handle_client(serverSocket):
     name = message.decode()
     clients[name] = clientAddress
     welcome_message = "Welcome %s. To exit, type !quit." % name
