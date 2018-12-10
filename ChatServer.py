@@ -1,8 +1,8 @@
-from socket import AF_INET, socket, SOCK_STREAM
+from socket import AF_INET, socket, SOCK_DGRAM
 from threading import Thread
 
 serverPort = 5000
-serverSocket = socket(AF_INET, SOCK_STREAM)
+serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind(('', serverPort))
 
 
@@ -12,9 +12,9 @@ addresses = {}
 
 def client_connections():
     while True:
-        connection_socket, addr = serverSocket.accept()
+        connection_socket, addr = serverSocket.recvfrom(2048)
         print("%s:%s has connected" % addr)
-        connection_socket.send(bytes("Type your name: ", "utf8"))
+        connection_socket.sendTo(bytes("Type your name: ", "utf8"), addr)
         addresses[connection_socket] = addr
         Thread(target=handle_client, args=(connection_socket,)).start()
 
@@ -32,7 +32,7 @@ def handle_client(connection_socket):
         if message != "!quit":
             broadcast(message, name+": ")
         else:
-            connection_socket.send(bytes("!quit","utf8"))
+            connection_socket.send(bytes("!quit", "utf8"))
             connection_socket.close()
             del clients[connection_socket]
             broadcast(("%s has left the chat" % name))
@@ -42,11 +42,10 @@ def handle_client(connection_socket):
 def broadcast(msg, prefix=""):
 
     for connections in clients:
-       connections.send((prefix + msg).encode())
+        connections.send((prefix + msg).encode())
 
 
 if __name__ == "__main__":
-    serverSocket.listen(5)
     print("The server is ready to receive")
     ACCEPT_THREAD = Thread(target=client_connections)
     ACCEPT_THREAD.start()
