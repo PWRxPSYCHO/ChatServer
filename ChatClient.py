@@ -1,30 +1,42 @@
 from socket import *
-from threading import Thread
+import threading
 
-serverName = 'localhost'
+serverHost = "localhost"
 serverPort = 5000
+threadLock = threading.Lock()
+isConnected = True
 
-clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-
-def incoming_messages():
-    while True:
+def incoming_messages(name, sock):
+    while isConnected:
         try:
-            message, serverAddress = clientSocket.recvfrom(2048)
-            print(message.decode())
-        except OSError:
-            break
+            threadLock.acquire()
+            while True:
+                data, addr = socket.recvfrom(2048)
+                print(str(data))
+        except:
+            pass
+        finally:
+            threadLock.release()
 
 
-def client_messages():
-    clientMsg = input("")
-    clientSocket.sendto(clientMsg.encode(), (serverName, serverPort))
-    if clientMsg == "!quit":
-        clientSocket.close()
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+serverSocket.bind((serverHost, serverPort))
 
+receiveThread = threading.Thread(
+    target=incoming_messages, args=("ReceiveingThread", serverSocket))
+receiveThread.start()
 
-if __name__ == "__main__":
-    receive_thread = Thread(target=incoming_messages)
-    receive_thread.start()
-    while True:
-        client_messages()
+name = input("Enter your name: ")
+message = input(name + ": ")
+
+while message != "!quit":
+    if message != '':
+        serverSocket.sendto(name + ": " + message, (serverHost, serverPort))
+    threadLock.acquire()
+    message = input(name + "->")
+    threadLock.release()
+
+isConnected = False
+receiveThread.join()
+serverSocket.close()
