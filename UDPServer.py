@@ -6,7 +6,6 @@ serverPort = 5000
 addr = (serverHost, serverPort)
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind(addr)
-#serverSocket.setblocking(0)
 
 clients = []
 isRunning = True
@@ -20,5 +19,6 @@ while isRunning:
         clients.append(addr)
     print(str(addr) + ":" + str(data))
     for client in clients:
+        print(serverSocket.sendto(data, client))
         serverSocket.sendto(data, client)
 serverSocket.close()

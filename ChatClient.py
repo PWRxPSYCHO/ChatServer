@@ -1,42 +1,46 @@
-from socket import *
+import socket
+import time
 import threading
 
-serverHost = "localhost"
-serverPort = 5000
-threadLock = threading.Lock()
-isConnected = True
+tLock = threading.Lock()
+shutdown = False
 
 
-def incoming_messages(name, sock):
-    while isConnected:
+def receving(name, sock):
+    while not shutdown:
         try:
-            threadLock.acquire()
+            tLock.acquire()
             while True:
-                data, addr = socket.recvfrom(2048)
-                print(data.decode())
+                data, addr = sock.recvfrom(1024)
+                print(str(data))
         except:
             pass
         finally:
-            threadLock.release()
+            tLock.release()
 
 
-serverSocket = socket(AF_INET, SOCK_DGRAM)
-serverSocket.setblocking(0)
+host = '127.0.0.1'
+port = 0
 
-receiveThread = threading.Thread(
-    target=incoming_messages, args=("ReceiveingThread", serverSocket))
-receiveThread.start()
+server = ('127.0.0.1', 5000)
 
-name = input("Enter your name: ")
-message = input(name + ": ")
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.bind((host, port))
+s.setblocking(0)
 
-while message != "!quit":
+rT = threading.Thread(target=receving, args=("RecvThread", s))
+rT.start()
+
+alias = input("Name: ")
+message = input(alias + "-> ")
+while message != 'q':
     if message != '':
-        serverSocket.sendto((name + ": " + message).encode(), (serverHost, serverPort))
-    threadLock.acquire()
-    message = input(name + ":")
-    threadLock.release()
+        s.sendto((alias + ": " + message).encode(), server)
+    tLock.acquire()
+    message = input(alias + ": ")
+    tLock.release()
+    time.sleep(0.2)
 
-isConnected = False
-receiveThread.join()
-serverSocket.close()
+shudown = True
+rT.join()
+s.close()
