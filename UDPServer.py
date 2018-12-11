@@ -1,10 +1,11 @@
-from socket import *
+from socket import AF_INET, socket, SOCK_DGRAM
 from threading import Thread
 
-
+serverHost = ''
 serverPort = 5000
+addr = (serverHost, serverPort)
 serverSocket = socket(AF_INET, SOCK_DGRAM)
-serverSocket.bind(('', serverPort))
+serverSocket.bind(addr)
 serverSocket.setblocking(0)
 
 clients = []
