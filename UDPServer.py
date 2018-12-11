@@ -19,6 +19,5 @@ while isRunning:
         clients.append(addr)
     print(str(addr) + ":" + str(data))
     for client in clients:
-        print(serverSocket.sendto(data, client))
         serverSocket.sendto(data, client)
 serverSocket.close()
