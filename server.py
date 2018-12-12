@@ -11,6 +11,7 @@ def incoming_messages(serverSocket, client_messages):
         message, clientAddress = serverSocket.recvfrom(2048)
         client_messages.put((message, clientAddress))
 
+
 def incoming_connections():
     serverPort = 5000
     serverSocket = socket(AF_INET, SOCK_DGRAM)
@@ -25,12 +26,11 @@ def incoming_connections():
         if clientAddress not in clients:
             clients.append(clientAddress)
             continue
-        clients.append(clientAddress)
         message = message.decode()
         if "!quit" in message:
             clients.remove(clientAddress)
             continue
-        print(str(clientAddress) +  message)
+        print(str(clientAddress) + message)
         for client in clients:
             if client != clientAddress:
                 serverSocket.sendto(message.encode(), client)

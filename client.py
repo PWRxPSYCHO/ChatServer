@@ -26,7 +26,7 @@ def client_main():
     Thread(target=server_messages, args=(serverSocket,)).start()
 
     while isRunning:
-        message = input()
+        message = input("->")
         if "!quit" in message:
             break
         message = username + ": " + message
