@@ -20,11 +20,13 @@ def server_messages(socket):
 def client_main():
     serverSocket = socket(AF_INET, SOCK_DGRAM)
 
+    #gets username from client
     username = input("Enter your username: ")
 
     serverSocket.sendto(username.encode(), (serverName, serverPort))
     Thread(target=server_messages, args=(serverSocket,)).start()
 
+#allows user to send message and checks if they want to quit.
     while isRunning:
         message = input("")
         if "!quit" in message:

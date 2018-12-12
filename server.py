@@ -13,19 +13,23 @@ def incoming_messages(serverSocket, client_messages):
 
 
 def incoming_connections():
+    #setup server
     serverPort = 5000
     serverSocket = socket(AF_INET, SOCK_DGRAM)
     serverSocket.bind(('localhost', serverPort))
 
+    #adds incoming messages to a Queue to be processed later
     client_messages = queue.Queue()
     print("The server is ready to receive")
 
     Thread(target=incoming_messages, args=(
         serverSocket, client_messages)).start()
 
+        #main loop, makes sure the queue isn't empty
     while True:
         while not client_messages.empty():
             message, clientAddress = client_messages.get()
+            #checks if a new connection if so add them to list of connections, send welcome message and alert all users that they joined
             if clientAddress not in clients:
                 message = message.decode()
                 name = message.split(':', 1)
@@ -38,6 +42,7 @@ def incoming_connections():
                 print(name[0] + " has joined the server")
                 continue
             message = message.decode()
+            #checks if the user wants to exit, if they do send message to other users that client has left
             if "!quit" in message:
                 clients.remove(clientAddress)
                 name = message.split(':', 1)
@@ -46,6 +51,7 @@ def incoming_connections():
                         (name[0] + " has left the server.").encode(), client)
                 print(name[0] + " has left the server")
             print(str(clientAddress) + message)
+            #sends message to all clients
             for client in clients:
                 if clientAddress not in clients:
                     break
