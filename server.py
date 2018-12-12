@@ -4,8 +4,6 @@ import queue
 
 
 clients = []
-leaveClient = []
-joinClient = []
 
 
 def incoming_messages(serverSocket, client_messages):
@@ -31,23 +29,22 @@ def incoming_connections():
             if clientAddress not in clients:
                 message = message.decode()
                 message = message.split(':', 1)
-                joinClient.append(message[0])
+                serverSocket.sendto(
+                    ("Welcome to the server! %s Type !quit if you want to quit" % message[0]).encode(), clientAddress)
                 for client in clients:
                     serverSocket.sendto(
-                        (joinClient[0] + " has joined the server.").encode(), client)
-                joinClient.pop()
-
+                        (message[0] + " has joined the server.").encode(), client)
                 clients.append(clientAddress)
+                rint(message[0] + "has joined the server")
                 continue
             message = message.decode()
             if "!quit" in message:
                 clients.remove(clientAddress)
                 message = message.split(':', 1)
-                leaveClient.append(message[0])
                 for client in clients:
                     serverSocket.sendto(
-                        (leaveClient[0] + " has left the server.").encode(), client)
-                leaveClient.pop()
+                        (message[0] + " has left the server.").encode(), client)
+                print(message[0] + "has left the server")
                 continue
             print(str(clientAddress) + message)
             for client in clients:

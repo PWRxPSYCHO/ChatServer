@@ -19,10 +19,10 @@ def server_messages(socket):
 
 def client_main():
     serverSocket = socket(AF_INET, SOCK_DGRAM)
-    print("Welcome to the server! Type !quit when you want to quit.")
+   # print("Welcome to the server! Type !quit when you want to quit.")
 
     username = input("Enter your username: ")
-    print("Hello %s!" % username)
+    #print("Hello %s!" % username)
 
     serverSocket.sendto(username.encode(), (serverName, serverPort))
     Thread(target=server_messages, args=(serverSocket,)).start()
