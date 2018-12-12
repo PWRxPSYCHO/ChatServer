@@ -28,26 +28,27 @@ def incoming_connections():
             message, clientAddress = client_messages.get()
             if clientAddress not in clients:
                 message = message.decode()
-                message = message.split(':', 1)
+                name = message.split(':', 1)
                 serverSocket.sendto(
-                    ("Welcome to the server! %s Type !quit if you want to quit" % message[0]).encode(), clientAddress)
+                    ("Welcome to the server! %s Type !quit if you want to quit" % name[0]).encode(), clientAddress)
                 for client in clients:
                     serverSocket.sendto(
-                        (message[0] + " has joined the server.").encode(), client)
+                        (name[0] + " has joined the server.").encode(), client)
                 clients.append(clientAddress)
-                print(message[0] + " has joined the server")
+                print(name[0] + " has joined the server")
                 continue
             message = message.decode()
             if "!quit" in message:
                 clients.remove(clientAddress)
-                message = message.split(':', 1)
+                name = message.split(':', 1)
                 for client in clients:
                     serverSocket.sendto(
-                        (message[0] + " has left the server.").encode(), client)
-                print(message[0] + " has left the server")
-                continue
+                        (name[0] + " has left the server.").encode(), client)
+                print(name[0] + " has left the server")
             print(str(clientAddress) + message)
             for client in clients:
+                if clientAddress not in clients:
+                    break
                 if client != clientAddress:
                     serverSocket.sendto(message.encode(), client)
     serverSocket.close()
