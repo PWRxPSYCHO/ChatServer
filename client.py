@@ -19,7 +19,6 @@ def server_messages(socket):
 
 def client_main():
     serverSocket = socket(AF_INET, SOCK_DGRAM)
-    #serverSocket.bind(('', serverPort))
     print("Welcome to the server! Type !quit when you want to quit.")
 
     username = input("Enter your username: ")
@@ -31,7 +30,7 @@ def client_main():
     while isRunning:
         message = input("")
         if "!quit" in message:
-            break
+            isRunning == False
         message = username + ": " + message
         serverSocket.sendto(message.encode(), (serverName, serverPort))
     serverSocket.close()
