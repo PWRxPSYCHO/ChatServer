@@ -21,19 +21,19 @@ def incoming_connections():
         serverSocket, client_messages)).start()
 
     while True:
-        data, addr = client_messages.get()
-        if addr not in clients:
-            clients.append(addr)
+        message, clientAddress = client_messages.get()
+        if clientAddress not in clients:
+            clients.append(clientAddress)
             continue
-        clients.append(addr)
-        data = data.decode()
-        if "!quit" in data:
-            clients.remove(addr)
+        clients.append(clientAddress)
+        message = message.decode()
+        if "!quit" in message:
+            clients.remove(clientAddress)
             continue
-        print(str(addr) +  data)
+        print(str(clientAddress) +  message)
         for client in clients:
-            if client != addr:
-                serverSocket.sendto(data.encode(), client)
+            if client != clientAddress:
+                serverSocket.sendto(message.encode(), client)
     serverSocket.close()
 
 

@@ -11,7 +11,7 @@ clientSocket = socket(AF_INET, SOCK_DGRAM)
 def server_messages(socket):
     while True:
         data, addr = socket.recvfrom(2048)
-        print(": " + data.decode())
+        print(data.decode())
 
 
 def client_main():
@@ -31,7 +31,6 @@ def client_main():
             break
         message = username + ": " + message
         serverSocket.sendto(message.encode(), (serverName, serverPort))
-    serverSocket.sendto(message.encode(), (serverName, serverPort))
     serverSocket.close()
 
 if __name__ == '__main__':
