@@ -6,7 +6,6 @@ serverPort = 5000
 isRunning = True
 
 clientSocket = socket(AF_INET, SOCK_DGRAM)
-print("Type !quit when you want to exit ")
 
 
 def server_messages(socket):
