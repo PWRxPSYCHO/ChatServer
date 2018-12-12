@@ -10,8 +10,11 @@ clientSocket = socket(AF_INET, SOCK_DGRAM)
 
 def server_messages(socket):
     while True:
-        data, addr = socket.recvfrom(2048)
-        print(data.decode())
+        try:
+            data, addr = socket.recvfrom(2048)
+            print(data.decode())
+        except:
+            pass
 
 
 def client_main():
@@ -26,7 +29,7 @@ def client_main():
     Thread(target=server_messages, args=(serverSocket,)).start()
 
     while isRunning:
-        message = input("->")
+        message = input("")
         if "!quit" in message:
             break
         message = username + ": " + message
