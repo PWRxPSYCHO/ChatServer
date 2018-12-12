@@ -35,7 +35,7 @@ def incoming_connections():
                     serverSocket.sendto(
                         (message[0] + " has joined the server.").encode(), client)
                 clients.append(clientAddress)
-                rint(message[0] + "has joined the server")
+                print(message[0] + "has joined the server")
                 continue
             message = message.decode()
             if "!quit" in message:
