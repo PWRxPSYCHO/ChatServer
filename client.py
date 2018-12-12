@@ -1,17 +1,39 @@
 from socket import *
+from threading import Thread
 
 serverName = 'localhost'
 serverPort = 5000
+isRunning = True
 
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 print("Type !quit when you want to exit ")
 
-while True:
-    message = input("Name: ")
-    if ("!quit" in message):
-        break
-    else:
-        clientSocket.sendto(message.encode(), (serverName, serverPort))
-        modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
-        print(modifiedMessage.decode())
 
+def server_messages(socket):
+    while True:
+        data, addr = socket.recvfrom(2048)
+        print(": " + data.decode())
+
+
+def client_main():
+    serverSocket = socket(AF_INET, SOCK_DGRAM)
+    #serverSocket.bind(('', serverPort))
+    print("Welcome to the server! Type !quit when you want to quit.")
+
+    username = input("Enter your username: ")
+    print("Hello %s!" % username)
+
+    serverSocket.sendto(username.encode(), (serverName, serverPort))
+    Thread(target=server_messages, args=(serverSocket,)).start()
+
+    while isRunning:
+        message = input()
+        if "!quit" in message:
+            break
+        message = username + ": " + message
+        serverSocket.sendto(message.encode(), (serverName, serverPort))
+    serverSocket.sendto(message.encode(), (serverName, serverPort))
+    serverSocket.close()
+
+if __name__ == '__main__':
+    client_main()
